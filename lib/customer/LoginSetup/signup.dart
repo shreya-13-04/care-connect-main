@@ -1,9 +1,13 @@
+import 'package:careconnect/customer/HomePage/demo.dart';
+import 'package:careconnect/customer/LoginSetup/login.dart';
+import 'package:careconnect/loginHomepage/ui.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../firebase_options.dart';
-import 'package:careconnect/customer/LoginSetup/login.dart';
+
 import 'dart:developer' as devtools show log;
 
 class Signup extends StatelessWidget {
@@ -62,135 +66,329 @@ class _HomepageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+      backgroundColor: Colors.white24,
+      resizeToAvoidBottomInset: true,
+      //bottomNavigationBar: _signup(context),
+      appBar: AppBar(
+        title: Text('CareConnect'),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 100,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => Hpage1()));
+          },
+          child: Container(
+            margin: const EdgeInsets.only(left: 10),
+            decoration: const BoxDecoration(
+              color: Color(0xffF7F7F9),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Text('Register as Customer'),
-
-                      TextField(
-                        controller: _firstName,
-                        decoration: InputDecoration(hintText: 'First Name'),
-                      ),
-                      TextField(
-                        controller: _lastName,
-                        decoration: InputDecoration(hintText: 'Last Name'),
-                      ),
-                      TextField(
-                        controller: _dob,
-                        decoration: InputDecoration(hintText: 'Date of Birth'),
-                      ),
-                      TextField(
-                        controller: _email,
-                        decoration: InputDecoration(hintText: 'gmail'),
-                      ),
-                      TextField(
-                        controller: _password,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(hintText: 'password'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          await Firebase.initializeApp(
-                            options: DefaultFirebaseOptions.currentPlatform,
-                          );
-                          final firstName = _firstName.text;
-                          final lastName = _lastName.text;
-                          final dob = _dob.text;
-                          final email = _email.text;
-                          final password = _password.text;
-                          try {
-                            final userCredential = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                                  email: email,
-                                  password: password,
-                                );
-
-                            print(userCredential);
-
-                            User? user = userCredential.user;
-                            if (user == null) {
-                              return;
-                            }
-                            if (user?.emailVerified ?? false) {
-                              //print('you are verified');
-                            } else {
-                              //print('you are not verified');
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const EmailVerification(),
-                                ),
-                              );
-                            }
-
-                            await FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user.uid)
-                                .set({
-                                  'firstName': firstName,
-                                  'lastName': lastName,
-                                  'dateOfBirth': dob,
-                                  'email': email,
-                                  'createdAt': FieldValue.serverTimestamp(),
-                                });
-                            devtools.log(userCredential.toString());
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              //await showErrorDialog(
-                              //  context,
-                              // 'Weak password. Please enter a stronger password.',
-                              //);
-                              //throw WeakPasswordAuthException();
-                              //devtools.log('Weak password');
-                            } else if (e.code == 'email-already-in-use') {
-                              //throw EmailAlreadyInUseAuthException();
-                              devtools.log('Email already in use');
-                            } else if (e.code == 'invalid-email') {
-                              //throw InvalidEmailAuthException();
-                              devtools.log('Invalid email');
-                            } else {
-                              //throw GenericAuthException();
-                              devtools.log(e.code);
-                            }
-                          }
-                          // To print the first name, fetch it from Firestore
-                        },
-
-                        child: const Text('Register'),
-                      ),
-
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const Login(),
-                            ),
-                          );
-                        },
-                        child: const Text('Login'),
-                      ),
-                    ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "Let's Get Started",
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                    ),
                   ),
                 ),
-              );
-            default:
-              // Firebase is not initialized yet
-              return const Text('Loading...');
-          }
-        },
+              ),
+              const SizedBox(height: 30),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'First Name',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _firstName,
+                    enableSuggestions: false,
+                    autocorrect: false,
+
+                    decoration: InputDecoration(
+                      filled: true,
+
+                      //hintText: 'mahdiforwork@gmail.com',
+                      // hintStyle: const TextStyle(
+                      // color: Color(0xff6A6A6A),
+                      // fontWeight: FontWeight.normal,
+                      // fontSize: 14,
+                      //),
+                      fillColor: const Color(0xffF7F7F9),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+
+                  //wqdaezfgvrdzgesrdgv
+                  const SizedBox(height: 20),
+                  Text(
+                    'LastName',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _lastName,
+
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: '',
+                      hintStyle: const TextStyle(
+                        color: Color(0xff6A6A6A),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                      fillColor: const Color(0xffF7F7F9),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+
+                  //email
+                  //wqdaezfgvrdzgesrdgv
+                  const SizedBox(height: 20),
+                  Text(
+                    'Email',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: '',
+                      hintStyle: const TextStyle(
+                        color: Color(0xff6A6A6A),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                      fillColor: const Color(0xffF7F7F9),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+
+                  // password
+                  //wqdaezfgvrdzgesrdgv
+                  const SizedBox(height: 20),
+                  Text(
+                    'Password',
+                    style: GoogleFonts.raleway(
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: '',
+                      hintStyle: const TextStyle(
+                        color: Color(0xff6A6A6A),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                      fillColor: const Color(0xffF7F7F9),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+
+                  ///////forget password
+
+                  // Forgot Password Button aligned right
+
+                  //login
+                  const SizedBox(height: 30), // Login Button (Centered)
+                  //signup
+                  // Login Button (Centered)
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff0D6EFD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 16,
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () async {
+                        // Navigate to HomePage (demo.dart)
+                        await Firebase.initializeApp(
+                          options: DefaultFirebaseOptions.currentPlatform,
+                        );
+                        final firstName = _firstName.text;
+                        final lastName = _lastName.text;
+                        final dob = _dob.text;
+                        final email = _email.text;
+                        final password = _password.text;
+                        try {
+                          final userCredential = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                email: email,
+                                password: password,
+                              );
+
+                          print(userCredential);
+
+                          User? user = userCredential.user;
+                          if (user == null) {
+                            return;
+                          }
+                          if (user?.emailVerified ?? false) {
+                            //print('you are verified');
+                          } else {
+                            //print('you are not verified');
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const EmailVerification(),
+                              ),
+                            );
+                          }
+
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .set({
+                                'firstName': firstName,
+                                'lastName': lastName,
+                                'dateOfBirth': dob,
+                                'email': email,
+                                'createdAt': FieldValue.serverTimestamp(),
+                              });
+                          devtools.log(userCredential.toString());
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            //await showErrorDialog(
+                            //  context,
+                            // 'Weak password. Please enter a stronger password.',
+                            //);
+                            //throw WeakPasswordAuthException();
+                            //devtools.log('Weak password');
+                          } else if (e.code == 'email-already-in-use') {
+                            //throw EmailAlreadyInUseAuthException();
+                            devtools.log('Email already in use');
+                          } else if (e.code == 'invalid-email') {
+                            //throw InvalidEmailAuthException();
+                            devtools.log('Invalid email');
+                          } else {
+                            //throw GenericAuthException();
+                            devtools.log(e.code);
+                          }
+                        }
+                      },
+                      child: const Text(
+                        "Signup",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  //login pagebnvvv
+                  const SizedBox(height: 25),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff0D6EFD),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 16,
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        // Navigate to HomePage (demo.dart)
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -225,7 +423,7 @@ class _emailVerificationState extends State<EmailVerification> {
             onPressed: () {
               Navigator.of(
                 context,
-              ).push(MaterialPageRoute(builder: (context) => const Login()));
+              ).push(MaterialPageRoute(builder: (context) => Login()));
             },
             child: const Text('Go to Login'),
           ),
