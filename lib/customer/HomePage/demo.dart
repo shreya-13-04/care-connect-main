@@ -24,7 +24,13 @@ class _BottomNavExampleState extends State<BottomNavExample> {
   int _selectedIndex = 0;
 
   // Define the pages to show
-  final List<Widget> _pages = [Homepage(), Ccbooking(), Chat(), Profile()];
+  
+  final List<Widget> _pages = [
+  Homepage(),
+  Ccbooking(),
+  Chat(),
+  CustomerProfilePage(), 
+];
 
   void _onItemTapped(int index) {
     setState(() {
