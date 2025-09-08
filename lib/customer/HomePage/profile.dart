@@ -1,3 +1,6 @@
+import 'package:careconnect/customer/LoginSetup/logout.dart';
+import 'package:careconnect/customer/Maps/tracking_page.dart';
+import 'package:careconnect/customer/Maps/userlocation.dart';
 import 'package:flutter/material.dart';
 
 class CustomerProfilePage extends StatelessWidget {
@@ -19,7 +22,9 @@ class CustomerProfilePage extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 60,
-                  backgroundImage: AssetImage('care-connect-main/assets/home/customer.png'),
+                  backgroundImage: AssetImage(
+                    'care-connect-main/assets/home/customer.png',
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
@@ -30,33 +35,49 @@ class CustomerProfilePage extends StatelessWidget {
                       color: Colors.blueAccent,
                     ),
                     padding: const EdgeInsets.all(6),
-                    child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 15),
 
             const Text(
-              "Shreya Balasubramani",
+              "Punith",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            Text("shreya@customer.com",
-                style: TextStyle(color: Colors.grey[700])),
+            Text(
+              "pnithkisuke@gmail.com",
+              style: TextStyle(color: Colors.grey[700]),
+            ),
             const SizedBox(height: 20),
 
             // Contact Info
             Card(
               child: ListTile(
                 leading: const Icon(Icons.phone, color: Colors.blueAccent),
-                title: const Text("+91 98765 43210"),
+                title: const Text("8688115326"),
               ),
             ),
             Card(
               child: ListTile(
-                leading:
-                    const Icon(Icons.location_on, color: Colors.blueAccent),
+                leading: const Icon(
+                  Icons.location_on,
+                  color: Colors.blueAccent,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TrackingPage(),
+                    ),
+                  );
+                },
                 title: const Text("Bangalore, India"),
               ),
             ),
@@ -101,9 +122,10 @@ class CustomerProfilePage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(value,
-                style: const TextStyle(
-                    fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 5),
             Text(title, style: const TextStyle(color: Colors.grey)),
           ],

@@ -43,6 +43,7 @@ class _HomepageState extends State<MyHomePage> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _dob;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -255,6 +256,14 @@ class _HomepageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
 
                   ///////forget password
 
@@ -278,6 +287,9 @@ class _HomepageState extends State<MyHomePage> {
                         elevation: 0,
                       ),
                       onPressed: () async {
+                        setState(() {
+                          _errorMessage = '';
+                        });
                         // Navigate to HomePage (demo.dart)
                         await Firebase.initializeApp(
                           options: DefaultFirebaseOptions.currentPlatform,
@@ -306,7 +318,7 @@ class _HomepageState extends State<MyHomePage> {
                             //print('you are not verified');
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => const EmailVerification(),
+                                builder: (context) => EmailVerification(),
                               ),
                             );
                           }
@@ -330,15 +342,27 @@ class _HomepageState extends State<MyHomePage> {
                             //);
                             //throw WeakPasswordAuthException();
                             //devtools.log('Weak password');
+                            setState(() {
+                              _errorMessage = 'Error: ${e.code}';
+                            });
                           } else if (e.code == 'email-already-in-use') {
                             //throw EmailAlreadyInUseAuthException();
                             devtools.log('Email already in use');
+                            setState(() {
+                              _errorMessage = 'Error: ${e.code}';
+                            });
                           } else if (e.code == 'invalid-email') {
                             //throw InvalidEmailAuthException();
                             devtools.log('Invalid email');
+                            setState(() {
+                              _errorMessage = 'Error: ${e.code}';
+                            });
                           } else {
                             //throw GenericAuthException();
                             devtools.log(e.code);
+                            setState(() {
+                              _errorMessage = 'Error: ${e.code}';
+                            });
                           }
                         }
                       },

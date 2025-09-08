@@ -48,7 +48,7 @@ class _BottomNavExampleState extends State<BottomNavExample> {
             icon: Icon(Icons.book_online),
             label: 'Request',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Earnings'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'chat'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),

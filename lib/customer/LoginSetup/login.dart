@@ -1,5 +1,6 @@
 import 'package:careconnect/customer/HomePage/demo.dart';
 import 'package:careconnect/customer/HomePage/homePage.dart';
+import 'package:careconnect/loginHomepage/forget_password.dart';
 import 'package:careconnect/loginHomepage/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,6 +42,7 @@ class MyHomePage extends StatefulWidget {
 class _HomepageState extends State<MyHomePage> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -144,6 +146,15 @@ class _HomepageState extends State<MyHomePage> {
                     ),
                   ),
 
+                  if (_errorMessage.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        _errorMessage,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+
                   //wqdaezfgvrdzgesrdgv
                   const SizedBox(height: 30),
                   Text(
@@ -186,14 +197,22 @@ class _HomepageState extends State<MyHomePage> {
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
                       onTap: () async {
+                        setState(() {
+                          _errorMessage = '';
+                        });
                         if (_email.text.trim().isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Please enter your email first"),
-                            ),
-                          );
-                          return;
+                          setState(() {
+                            _errorMessage = "Please enter your email first";
+                          });
                         }
+                        //f (_email.text.trim().isEmpty) {
+                        //ScaffoldMessenger.of(context).showSnackBar(
+                        //const SnackBar(
+                        // content: Text("Please enter your email first"),
+                        //),
+                        //);
+                        //return;
+                        //}
                         try {
                           await FirebaseAuth.instance.sendPasswordResetEmail(
                             email: _email.text,
@@ -201,14 +220,23 @@ class _HomepageState extends State<MyHomePage> {
                           // ScaffoldMessenger.of(context).showSnackBar(
                           // SnackBar(content: Text(_email.text.trim())),
                           // );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Password reset link sent to email",
-                              ),
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //const SnackBar(
+                          // content: Text(
+                          //"Password reset link sent to email",
+                          // ),
+                          //),
+                          //  );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConformationPage(),
                             ),
                           );
                         } catch (e) {
+                          setState(() {
+                            _errorMessage = 'Error: ${e.toString()}';
+                          });
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Error: ${e.toString()}")),
                           );
@@ -262,6 +290,9 @@ class _HomepageState extends State<MyHomePage> {
                           devtools.log(userCredential.toString());
                           print(userCredential.user);
                         } on FirebaseAuthException catch (e) {
+                          setState(() {
+                            _errorMessage = 'Error: ${e.code}';
+                          });
                           devtools.log(e.code);
                         }
                         // Navigate to HomePage (demo.dart)
