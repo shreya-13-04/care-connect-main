@@ -1,45 +1,37 @@
-import 'package:careconnect/customer/HomePage/demo.dart';
-import 'package:careconnect/customer/HomePage/homePage.dart';
-import 'package:careconnect/loginHomepage/forget_password.dart';
-import 'package:careconnect/loginHomepage/ui.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:careconnect/customer/LoginSetup/signup.dart';
 import '../../firebase_options.dart';
+import 'package:careconnect/customer/HomePage/demo.dart';
 import 'package:careconnect/customer/LoginSetup/signup.dart';
+import 'package:careconnect/loginHomepage/forget_password.dart';
 import 'dart:developer' as devtools show log;
-import 'package:google_fonts/google_fonts.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        ),
-        debugShowCheckedModeBanner: false,
-        home: const MyHomePage(),
+    return MaterialApp(
+      title: 'CareConnect',
+      debugShowCheckedModeBanner: false,
+      home: const LoginScreen(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _HomepageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _HomepageState extends State<MyHomePage> {
+class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   String _errorMessage = '';
@@ -55,296 +47,189 @@ class _HomepageState extends State<MyHomePage> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      //bottomNavigationBar: _signup(context),
-      appBar: AppBar(
-        title: Text('CareConnect'),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 100,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (context) => const Hpage1()));
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 10),
-            decoration: const BoxDecoration(
-              color: Color(0xffF7F7F9),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.black,
-              ),
-            ),
+      body: Container(
+        width: size.width,
+        height: size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xff81D4FA), Color(0xff66BB6A)], // light blue to green
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  'Hello Again',
-                  style: GoogleFonts.raleway(
-                    textStyle: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32,
-                    ),
-                  ),
-                ),
+
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 80),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Email Address',
-                    style: GoogleFonts.raleway(
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Welcome Back!',
+                      style: GoogleFonts.raleway(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Login to your account',
+                      style: GoogleFonts.raleway(
                         fontSize: 16,
+                        color: Colors.grey[700],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      filled: true,
+                    const SizedBox(height: 40),
 
-                      //hintText: 'mahdiforwork@gmail.com',
-                      // hintStyle: const TextStyle(
-                      // color: Color(0xff6A6A6A),
-                      // fontWeight: FontWeight.normal,
-                      // fontSize: 14,
-                      //),
-                      fillColor: const Color(0xffF7F7F9),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(14),
+                    // Email
+                    TextField(
+                      controller: _email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.email),
+                        hintText: 'Email',
+                        filled: true,
+                        fillColor: const Color(0xffF7F7F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
 
-                  if (_errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        _errorMessage,
-                        style: TextStyle(color: Colors.red),
+                    // Password
+                    TextField(
+                      controller: _password,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        hintText: 'Password',
+                        filled: true,
+                        fillColor: const Color(0xffF7F7F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
 
-                  //wqdaezfgvrdzgesrdgv
-                  const SizedBox(height: 30),
-                  Text(
-                    'Password',
-                    style: GoogleFonts.raleway(
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
+                    if (_errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          _errorMessage,
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: InputDecoration(
-                      filled: true,
-                      hintText: '',
-                      hintStyle: const TextStyle(
-                        color: Color(0xff6A6A6A),
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                      ),
-                      fillColor: const Color(0xffF7F7F9),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
 
-                  ///////forget password
-                  const SizedBox(height: 8),
-
-                  // Forgot Password Button aligned right
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () async {
-                        setState(() {
-                          _errorMessage = '';
-                        });
-                        if (_email.text.trim().isEmpty) {
-                          setState(() {
-                            _errorMessage = "Please enter your email first";
-                          });
-                        }
-                        //f (_email.text.trim().isEmpty) {
-                        //ScaffoldMessenger.of(context).showSnackBar(
-                        //const SnackBar(
-                        // content: Text("Please enter your email first"),
-                        //),
-                        //);
-                        //return;
-                        //}
-                        try {
-                          await FirebaseAuth.instance.sendPasswordResetEmail(
-                            email: _email.text,
-                          );
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          // SnackBar(content: Text(_email.text.trim())),
-                          // );
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //const SnackBar(
-                          // content: Text(
-                          //"Password reset link sent to email",
-                          // ),
-                          //),
-                          //  );
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ConformationPage(),
-                            ),
+                                builder: (context) => ConformationPage()),
                           );
-                        } catch (e) {
-                          setState(() {
-                            _errorMessage = 'Error: ${e.toString()}';
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Error: ${e.toString()}")),
-                          );
-                        }
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: GoogleFonts.raleway(
-                          textStyle: const TextStyle(
-                            color: Colors.blue,
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: GoogleFonts.raleway(
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            color: Colors.deepPurple,
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 32),
 
-                  //login
-                  const SizedBox(height: 50),
-
-                  // Login Button (Centered)
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff0D6EFD),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 16,
-                        ),
-                        elevation: 0,
-                      ),
-                      onPressed: () async {
-                        await Firebase.initializeApp(
-                          options: DefaultFirebaseOptions.currentPlatform,
-                        );
-                        final email = _email.text;
-                        final password = _password.text;
-                        try {
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                email: email,
-                                password: password,
-                              );
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => Demo1()),
+                    // Login Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await Firebase.initializeApp(
+                            options: DefaultFirebaseOptions.currentPlatform,
                           );
-                          devtools.log(userCredential.toString());
-                          print(userCredential.user);
-                        } on FirebaseAuthException catch (e) {
-                          setState(() {
-                            _errorMessage = 'Error: ${e.code}';
-                          });
-                          devtools.log(e.code);
-                        }
-                        // Navigate to HomePage (demo.dart)
-                      },
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          final email = _email.text;
+                          final password = _password.text;
+                          try {
+                            final userCredential = await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                              email: email,
+                              password: password,
+                            );
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => Demo1()));
+                            devtools.log(userCredential.toString());
+                          } on FirebaseAuthException catch (e) {
+                            setState(() {
+                              _errorMessage = 'Error: ${e.code}';
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: Color(0xffd5bcff), // green
+
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
 
-                  //signup
-                  const SizedBox(height: 30),
-
-                  // Login Button (Centered)
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff0D6EFD),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    // Signup Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => Signup()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(color: Colors.deepPurple),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 16,
-                        ),
-                        elevation: 0,
-                      ),
-                      onPressed: () {
-                        // Navigate to HomePage (demo.dart)
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => Signup()),
-                        );
-                      },
-                      child: const Text(
-                        "Signup",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        child: const Text(
+                          'Signup',
+                          style: TextStyle(
+                              fontSize: 18, color: Colors.deepPurple),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
